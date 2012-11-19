@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<title>Instagram</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> 
+<style>
+html, body { height: 100%; margin: 0; padding: 0; background-color: #ffffff;}
+
+#panel { height: auto; float: right; width: 100%; }
+#panel .photoWrapper { width: 150px; height: 150px; margin:2px; float:left; box-shadow: 0 2px 2px rgba(33, 33, 33, 0.4); display:none;}
+#panel. photoWrapper .photo { width: auto; height: auto; }
+
+</style>
+<script type="text/javascript">
+<!--
+$(document).ready(function(){
+
+	var access_token = '3794301.f59def8.e08bcd8b10614074882b2d1b787e2b6f';
+
+	$.getJSON("https://api.instagram.com/v1/tags/halifax/media/recent?callback=?",{access_token:access_token}, function(data){
+		if(data.meta.code == 200) {
+			var photos = data.data;
+			
+			if(photos.length > 0) {
+				for (var key in photos ){
+					var photo = photos[key];
+					$('<div id=p' + photo.id + '></div>').addClass('photoWrapper').appendTo('#panel');
+					
+					var str = '<img id="' + photo.id + '" src="' + photo.images.thumbnail.url + '" width="100%">';
+					$('<div></div>').addClass('photo').html(str).appendTo('#p' + photo.id);
+		
+					$('#' + photo.id).load(function() {
+						$('#p' + $(this).attr('id')).fadeTo('slow', 1.0);
+					});
+
+				}
+			}else{
+				alert('empty');
+			}
+			
+		}else{
+			alert(data.meta.error_message);
+		}
+
+	});
+
+
+});
+//-->
+</script>
+</head>
+<body>
+<div id="panel"></div>
+</body>
+</html>
