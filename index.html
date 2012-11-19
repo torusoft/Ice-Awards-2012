@@ -6,13 +6,13 @@
 <title>Instagram</title>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> 
 <style>
-html, body { height: 100%; margin: 0; padding: 0; background: #fff;}
+html, body { height: 720px; margin: 0; padding: 0; background: #fff; width: 1280px; border: 1px solid red; position: relative; top: 0px; left: 0px;}
 
 #panel { height: auto; float: right; width: 100%; }
 #panel .photoWrapper { width: 150px; height: 150px; margin:2px; float:left; box-shadow: 0 2px 2px rgba(33, 33, 33, 0.4); display:none;}
 #panel. photoWrapper .photo { width: auto; height: auto; }
 
-.instagram-container{width: 486px; height: 252px; background: gray;}
+.instagram-container{width: 486px; height: 252px; background: gray; overflow: hidden;}
 
 .twitter-feed-area{position: absolute; bottom: 0px; right: 0px; width: 360px; height: 585px; background: #000;}
 .twitter-feed{width: 324px; height: 364px; background: blue; margin: 154px 18px 0px 18px;}
@@ -57,9 +57,9 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
-<div id="panel"></div>
+
 <div class="instagram-container">
-	Instagram here
+<div id="panel"></div>
 </div>
 
 
