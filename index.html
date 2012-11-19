@@ -20,37 +20,51 @@ html, body { height: 720px; margin: 0; padding: 0; background: #fff; width: 1280
 </style>
 <script type="text/javascript">
 <!--
+
+var offset = "";
+
 $(document).ready(function(){
 
-	var access_token = '3794301.f59def8.e08bcd8b10614074882b2d1b787e2b6f';
+	getNewPhotos();
+	var poll_token = setInterval(getNewPhotos, 20000);
 
-	$.getJSON("https://api.instagram.com/v1/tags/halifax/media/recent?callback=?",{access_token:access_token}, function(data){
-		if(data.meta.code == 200) {
-			var photos = data.data;
+	var photo_stack = [];
+
+	function getNewPhotos(){
+		console.log("calling " + "https://api.instagram.com/v1/tags/halifax/media/recent?max_id=" + offset + "&callback=?")
+		$.getJSON("https://api.instagram.com/v1/tags/halifax/media/recent?max_id=" + offset + "&callback=?",{access_token:'3794301.f59def8.e08bcd8b10614074882b2d1b787e2b6f'}, function(data){
+			if(data.meta.code == 200) {
+
+				var photos = data.data;
+
+				if(photos.length > 0) {
+
+					photo_stack = photos.concat(photo_stack);
+					offset = photos[0].id;
+
+					for (var key in photos){
+						console.log(key);
+						var photo = photos[key];
+						$('<div id=p' + photo.id + '></div>').addClass('photoWrapper').appendTo('#panel');
+						
+						var str = '<img id="' + photo.id + '" src="' + photo.images.thumbnail.url + '" width="100%">';
+						$('<div></div>').addClass('photo').html(str).appendTo('#p' + photo.id);
 			
-			if(photos.length > 0) {
-				for (var key in photos ){
-					var photo = photos[key];
-					$('<div id=p' + photo.id + '></div>').addClass('photoWrapper').appendTo('#panel');
-					
-					var str = '<img id="' + photo.id + '" src="' + photo.images.thumbnail.url + '" width="100%">';
-					$('<div></div>').addClass('photo').html(str).appendTo('#p' + photo.id);
-		
-					$('#' + photo.id).load(function() {
-						$('#p' + $(this).attr('id')).fadeTo('slow', 1.0);
-					});
-
+						$('#' + photo.id).load(function() {
+							$('#p' + $(this).attr('id')).fadeTo('slow', 1.0);
+						});
+	
+					}
+				}else{
+					console.log('empty');
 				}
+				
 			}else{
-				alert('empty');
+				console.log(data.meta.error_message);
 			}
-			
-		}else{
-			alert(data.meta.error_message);
-		}
-
-	});
-
+	
+		});
+	}
 
 });
 //-->
