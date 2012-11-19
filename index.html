@@ -6,12 +6,17 @@
 <title>Instagram</title>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> 
 <style>
-html, body { height: 100%; margin: 0; padding: 0; background-color: #ffffff;}
+html, body { height: 100%; margin: 0; padding: 0; background: #fff;}
 
 #panel { height: auto; float: right; width: 100%; }
 #panel .photoWrapper { width: 150px; height: 150px; margin:2px; float:left; box-shadow: 0 2px 2px rgba(33, 33, 33, 0.4); display:none;}
 #panel. photoWrapper .photo { width: auto; height: auto; }
 
+.instagram-container{width: 486px; height: 252px; background: gray;}
+
+.twitter-feed-area{position: absolute; bottom: 0px; right: 0px; width: 360px; height: 585px; background: #000;}
+.twitter-feed{width: 324px; height: 364px; background: blue; margin: 154px 18px 0px 18px;}
+.twitter-feed-area A{display:block; width: 225px; height: 36px; background: url('twitter-bubble.png') no-repeat; float: right; margin: 18px; color: red; font-size: 18px; font-family: Helvetica, sans-serif; font-weight: bold; text-indent: 10px;}
 </style>
 <script type="text/javascript">
 <!--
@@ -53,5 +58,15 @@ $(document).ready(function(){
 </head>
 <body>
 <div id="panel"></div>
+<div class="instagram-container">
+	Instagram here
+</div>
+
+
+
+<div class="twitter-feed-area">
+	<div class="twitter-feed">Feed here</div>
+	<a>#IceAwards2013</a>
+</div>
 </body>
 </html>
