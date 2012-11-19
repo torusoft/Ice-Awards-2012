@@ -5,6 +5,9 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <title>Instagram</title>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> 
+<script type="text/javascript" src="jquery.transit.min.js"></script> 
+<script type="text/javascript" src="jquery.slideshowify.min.js"></script> 
+
 <style>
 html, body { height: 720px; margin: 0; padding: 0; background: #000; width: 1280px; border: 1px solid red; position: relative; top: 0px; left: 0px;}
 
@@ -31,23 +34,22 @@ $(document).ready(function(){
 	var photo_stack = [];
 
 	function getNewPhotos(){
-		console.log("calling " + "https://api.instagram.com/v1/tags/halifax/media/recent?max_id=" + offset + "&callback=?")
-		$.getJSON("https://api.instagram.com/v1/tags/halifax/media/recent?max_id=" + offset + "&callback=?",{access_token:'3794301.f59def8.e08bcd8b10614074882b2d1b787e2b6f'}, function(data){
+		console.log("calling " + "https://api.instagram.com/v1/tags/halifax/media/recent?min_id=" + offset + "&callback=?")
+		$.getJSON("https://api.instagram.com/v1/tags/halifax/media/recent?min_id=" + offset + "&callback=?",{access_token:'3794301.f59def8.e08bcd8b10614074882b2d1b787e2b6f'}, function(data){
 			if(data.meta.code == 200) {
 
 				var photos = data.data;
 
 				if(photos.length > 0) {
 
+					offset = data.pagination.min_tag_id;
 					photo_stack = photos.concat(photo_stack);
-					offset = photos[0].id;
 
 					for (var key in photos){
-						console.log(key);
 						var photo = photos[key];
 						$('<div id=p' + photo.id + '></div>').addClass('photoWrapper').appendTo('#panel');
-						
-						var str = '<img id="' + photo.id + '" src="' + photo.images.thumbnail.url + '" width="100%">';
+
+						var str = '<img id="' + photo.id + '" src="' + photo.images.standard_resolution.url + '" width="100%">';
 						$('<div></div>').addClass('photo').html(str).appendTo('#p' + photo.id);
 			
 						$('#' + photo.id).load(function() {
@@ -62,6 +64,8 @@ $(document).ready(function(){
 			}else{
 				console.log(data.meta.error_message);
 			}
+			
+			console.log(photo_stack);
 	
 		});
 	}
