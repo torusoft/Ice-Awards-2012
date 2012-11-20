@@ -4,13 +4,14 @@
 <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <title>Instagram</title>
+
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> 
+<script type="text/javascript" src="moment.min.js"></script> 
 <script type="text/javascript" src="jquery.transit.min.js"></script> 
 <script type="text/javascript" src="jquery.slideshowify.min.js"></script> 
-<script type="text/javascript" src="moment.min.js"></script> 
 
 <style>
-html, body { height: 720px; margin: 0; padding: 0; background: #000; width: 1280px; border: 1px solid red; position: relative; top: 0px; left: 0px;}
+html, body { height: 720px; margin: 0; padding: 0; background: #000; width: 1280px; position: relative; top: 0px; left: 0px;}
 
 .instagram-container {
 	position: relative; 
@@ -20,105 +21,112 @@ html, body { height: 720px; margin: 0; padding: 0; background: #000; width: 1280
 	z-index: 10;
 }
 
-
 .twitter-feed-area{position: absolute; bottom: 0px; right: 0px; width: 360px; height: 585px; background: #000; background: gray;}
 .twitter-feed{width: 324px; height: 376px; background: url('twitter-feed-background.png') no-repeat; margin: 154px 18px 0px 18px;}
 .twitter-feed-area A.footer{display:block; width: 225px; height: 36px; background: url('twitter-bubble.png') no-repeat; float: right; margin: 8px 18px 18px 18px; color: red; font-size: 18px; font-family: Helvetica, sans-serif; font-weight: bold; text-indent: 10px; padding: 2px;}
 </style>
+
 <script type="text/javascript">
 <!--
 
-var offset = "";
+// global variables (these should be migrated into controller objects)
+var photo_offset = "";
 var twitter_offset = "";
+var hashtag = "halifax";
 
 $(document).ready(function(){
 
-	var photo_stack = [];
 	var tweet_stack = [];
+	var tweet_cursor = 0;
 
 	function getNewPhotos(){
-		console.log("calling " + "https://api.instagram.com/v1/tags/halifax/media/recent?min_id=" + offset + "&callback=?")
-		$.getJSON("https://api.instagram.com/v1/tags/halifax/media/recent?min_id=" + offset + "&callback=?",{access_token:'3794301.f59def8.e08bcd8b10614074882b2d1b787e2b6f'}, function(data){
+		// periodically fetches new Instagram photos and adds them to #photo_pool,
+		// then re-initializes the slideshow to include newest photos
+
+		$.getJSON("https://api.instagram.com/v1/tags/" + hashtag + "/media/recent?min_id=" + photo_offset + "&callback=?",{access_token:'3794301.f59def8.e08bcd8b10614074882b2d1b787e2b6f'}, function(data){
 			if(data.meta.code == 200) {
 
 				var photos = data.data;
 
 				if(photos.length > 0) {
 
-					offset = data.pagination.min_tag_id;
-					photo_stack = photos.concat(photo_stack);
+					// update the newest photo offset, to avoid duplicates
+					photo_offset = data.pagination.min_tag_id;
 
-					for (var key in photos){
-						var photo = photos[key];
-						var tmp = $('<img id="' + photo.id + '" src="' + photo.images.standard_resolution.url + '">');
-						$("#panel").append(tmp);
+					// add new photos to #photo_panel
+					$.each(photos, function(i, photo){
+						$("#photo_pool").append($('<img id="' + photo.id + '" src="' + photo.images.standard_resolution.url + '">'));
+					});
 
-					}
+					// clear current slideshow container (destroys current slideshow),
+					// and re-initialize the slideshow in the same container
 					$(".instagram-container").empty();
-					$('#panel img').slideshowify({ parentEl:'.instagram-container' });
-				}
-				else{
-					console.log('empty');
-				}
-				
-			}else{
-				console.log(data.meta.error_message);
+					$('#photo_pool img').slideshowify({ parentEl:'.instagram-container' });
+				}				
 			}
-			
-			console.log(photo_stack);
-	
+
 		});
 	};
 
 
-	var tweet_cursor = 0;
-
 	function getNewTweets(){
-		console.log("calling " + "http://search.twitter.com/search.json?q=halifax=5&rpp=50&since_id="+twitter_offset+"&include_entities=1");
-		$.ajax("http://search.twitter.com/search.json?q=halifax&rpp=50&since_id="+twitter_offset+"&include_entities=1", {
-			crossDomain: true,
-			dataType: "jsonp",
-			success: function(data){
+		// periodically fetches new tweets and updates tweet_stack to reflect the 30 most recent
 
-				tweet_stack = data.results.concat(tweet_stack);
-				tweet_stack.slice(0,29);
-				console.log(tweet_stack);
-				console.log(data.results[0]);
-				if(data.results.length > 0)
-					twitter_offset = data.results[0].id;
-			}
+		// retrieve all tweets newer than the previous newest tweet ID (blank on initial run)
+		$.getJSON("http://search.twitter.com/search.json?q=" + hashtag + "&rpp=50&since_id=" + twitter_offset + "&include_entities=1", function(data){
+
+			var initialized = (tweet_stack.length != 0);
+
+			// add all new tweets to tweet_stack, then trim down to 30 newest
+			tweet_stack = data.results.concat(tweet_stack);
+			tweet_stack.slice(0,29);
+
+			// update newest tweet id, if it exists
+			if(data.results.length > 0)
+				twitter_offset = data.results[0].id;
+
+			// display tweets before waiting for first setInterval(displayTweets)
+			if(!initialized) displayTweets();
+
 		});
+
 	};
 
 	function displayTweets(){
+		// displays 5 of the most recent tweets from tweet_stack, 5 at a time
 
-		console.log(tweet_cursor);
-		console.log(tweet_stack);
-
+		// clear out present display
 		$('.twitter-feed UL').empty();
 
+		// reset cursor to top of array if we reach the end
 		if(tweet_cursor >= 29) tweet_cursor = 0;
 
+		// cycle through tweet_stack, 5 tweets at a time, incrementing the cursor each time
 		for(var i=tweet_cursor, ceiling=tweet_cursor+5; ((i<ceiling) && (tweet_cursor < tweet_stack.length)); i++){
-			console.log(i);
+
 			var item = tweet_stack[i]
 			var text = item.text;
+
+			// replace links, usernames and hashtags with proper links
 	 		var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
 	   		text = text.replace(exp,"<a href='$1' target='_blank'>$1</a>");
 	   		text = text.replace(/(^|\s)@(\w+)/g, "$1@<a href=\"http://www.twitter.com/$2\" target='_blank'>$2</a>");
 	  		text = text.replace(/(^|\s)#(\w+)/g, "$1#<a href=\"http://search.twitter.com/search?q=%23$2\" target='_blank'>$2</a>");
-			
+
+			// append human-friendly relative time to tweet
 		    var created = moment(tweet_stack[i].created_at).fromNow();
-			text = text+"<br /><span>"+created+"</span>";
+			text = text + "<br /><span>" + created + "</span>";
 			$("<li><b>" + item.from_user_name + "</b> " + text + "</li>").appendTo(".twitter-feed UL");
 			tweet_cursor++;
 		}
 	}
 
+	// set up intervals to update Instagram photos, tweets, and tweet-refreshes
 	var poll_token_instagram = setInterval(getNewPhotos, 20000);
 	var poll_token_twitter_fetch = setInterval(getNewTweets, 30000);
 	var poll_token_twitter_display = setInterval(displayTweets, 10000);
 
+	// initial calls to populate photo_stack and tweet_stack
 	getNewPhotos();
 	getNewTweets();
 
@@ -131,7 +139,7 @@ $(document).ready(function(){
 <div class="instagram-container">
 </div>
 
-<div id="panel"></div>
+<div id="photo_pool"></div>
 
 
 
