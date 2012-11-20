@@ -7,31 +7,34 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> 
 <script type="text/javascript" src="jquery.transit.min.js"></script> 
 <script type="text/javascript" src="jquery.slideshowify.min.js"></script> 
+<script type="text/javascript" src="moment.min.js"></script> 
 
 <style>
 html, body { height: 720px; margin: 0; padding: 0; background: #000; width: 1280px; border: 1px solid red; position: relative; top: 0px; left: 0px;}
 
-#panel { height: auto; float: right; width: 100%; }
-#panel .photoWrapper { width: 150px; height: 150px; margin:2px; float:left; box-shadow: 0 2px 2px rgba(33, 33, 33, 0.4); display:none;}
-#panel. photoWrapper .photo { width: auto; height: auto; }
+.instagram-container {
+	position: relative; 
+	width: 486px; 
+	height: 252px;
+	border: 1px solid #000;
+	z-index: 10;
+}
 
-.instagram-container{width: 486px; height: 252px; background: gray; overflow: hidden;}
 
 .twitter-feed-area{position: absolute; bottom: 0px; right: 0px; width: 360px; height: 585px; background: #000; background: gray;}
 .twitter-feed{width: 324px; height: 376px; background: url('twitter-feed-background.png') no-repeat; margin: 154px 18px 0px 18px;}
-.twitter-feed-area A{display:block; width: 225px; height: 36px; background: url('twitter-bubble.png') no-repeat; float: right; margin: 8px 18px 18px 18px; color: red; font-size: 18px; font-family: Helvetica, sans-serif; font-weight: bold; text-indent: 10px; padding: 2px;}
+.twitter-feed-area A.footer{display:block; width: 225px; height: 36px; background: url('twitter-bubble.png') no-repeat; float: right; margin: 8px 18px 18px 18px; color: red; font-size: 18px; font-family: Helvetica, sans-serif; font-weight: bold; text-indent: 10px; padding: 2px;}
 </style>
 <script type="text/javascript">
 <!--
 
 var offset = "";
+var twitter_offset = "";
 
 $(document).ready(function(){
 
-	getNewPhotos();
-	var poll_token = setInterval(getNewPhotos, 20000);
-
 	var photo_stack = [];
+	var tweet_stack = [];
 
 	function getNewPhotos(){
 		console.log("calling " + "https://api.instagram.com/v1/tags/halifax/media/recent?min_id=" + offset + "&callback=?")
@@ -47,17 +50,14 @@ $(document).ready(function(){
 
 					for (var key in photos){
 						var photo = photos[key];
-						$('<div id=p' + photo.id + '></div>').addClass('photoWrapper').appendTo('#panel');
+						var tmp = $('<img id="' + photo.id + '" src="' + photo.images.standard_resolution.url + '">');
+						$("#panel").append(tmp);
 
-						var str = '<img id="' + photo.id + '" src="' + photo.images.standard_resolution.url + '" width="100%">';
-						$('<div></div>').addClass('photo').html(str).appendTo('#p' + photo.id);
-			
-						$('#' + photo.id).load(function() {
-							$('#p' + $(this).attr('id')).fadeTo('slow', 1.0);
-						});
-	
 					}
-				}else{
+					$(".instagram-container").empty();
+					$('#panel img').slideshowify({ parentEl:'.instagram-container' });
+				}
+				else{
 					console.log('empty');
 				}
 				
@@ -68,7 +68,59 @@ $(document).ready(function(){
 			console.log(photo_stack);
 	
 		});
+	};
+
+
+	var tweet_cursor = 0;
+
+	function getNewTweets(){
+		console.log("calling " + "http://search.twitter.com/search.json?q=halifax=5&rpp=50&since_id="+twitter_offset+"&include_entities=1");
+		$.ajax("http://search.twitter.com/search.json?q=halifax&rpp=50&since_id="+twitter_offset+"&include_entities=1", {
+			crossDomain: true,
+			dataType: "jsonp",
+			success: function(data){
+
+				tweet_stack = data.results.concat(tweet_stack);
+				tweet_stack.slice(0,29);
+				console.log(tweet_stack);
+				console.log(data.results[0]);
+				if(data.results.length > 0)
+					twitter_offset = data.results[0].id;
+			}
+		});
+	};
+
+	function displayTweets(){
+
+		console.log(tweet_cursor);
+		console.log(tweet_stack);
+
+		$('.twitter-feed UL').empty();
+
+		if(tweet_cursor >= 29) tweet_cursor = 0;
+
+		for(var i=tweet_cursor, ceiling=tweet_cursor+5; ((i<ceiling) && (tweet_cursor < tweet_stack.length)); i++){
+			console.log(i);
+			var item = tweet_stack[i]
+			var text = item.text;
+	 		var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
+	   		text = text.replace(exp,"<a href='$1' target='_blank'>$1</a>");
+	   		text = text.replace(/(^|\s)@(\w+)/g, "$1@<a href=\"http://www.twitter.com/$2\" target='_blank'>$2</a>");
+	  		text = text.replace(/(^|\s)#(\w+)/g, "$1#<a href=\"http://search.twitter.com/search?q=%23$2\" target='_blank'>$2</a>");
+			
+		    var created = moment(tweet_stack[i].created_at).fromNow();
+			text = text+"<br /><span>"+created+"</span>";
+			$("<li><b>" + item.from_user_name + "</b> " + text + "</li>").appendTo(".twitter-feed UL");
+			tweet_cursor++;
+		}
 	}
+
+	var poll_token_instagram = setInterval(getNewPhotos, 20000);
+	var poll_token_twitter_fetch = setInterval(getNewTweets, 30000);
+	var poll_token_twitter_display = setInterval(displayTweets, 10000);
+
+	getNewPhotos();
+	getNewTweets();
 
 });
 //-->
@@ -77,14 +129,15 @@ $(document).ready(function(){
 <body>
 
 <div class="instagram-container">
-<div id="panel"></div>
 </div>
+
+<div id="panel"></div>
 
 
 
 <div class="twitter-feed-area">
-	<div class="twitter-feed">Feed here</div>
-	<a>#IceAwards2012</a>
+	<div class="twitter-feed"><ul></ul></div>
+	<a class="footer">#IceAwards2012</a>
 </div>
 </body>
 </html>
