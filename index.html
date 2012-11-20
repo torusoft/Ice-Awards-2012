@@ -12,7 +12,7 @@
 
 <style>
 html, body { height: 720px; margin: 0; padding: 0; background: #000; width: 1280px; position: relative; top: 0px; left: 0px;}
-
+P{margin: 0; padding: 0;}
 .instagram-container {
 	position: relative; 
 	width: 486px; 
@@ -23,7 +23,14 @@ html, body { height: 720px; margin: 0; padding: 0; background: #000; width: 1280
 
 .twitter-feed-area{position: absolute; bottom: 0px; right: 0px; width: 360px; height: 585px; background: #000; background: gray;}
 .twitter-feed{width: 324px; height: 376px; background: url('twitter-feed-background.png') no-repeat; margin: 154px 18px 0px 18px;}
-.twitter-feed-area A.footer{display:block; width: 225px; height: 36px; background: url('twitter-bubble.png') no-repeat; float: right; margin: 8px 18px 18px 18px; color: red; font-size: 18px; font-family: Helvetica, sans-serif; font-weight: bold; text-indent: 10px; padding: 2px;}
+
+.twitter-feed UL{padding-left: 0px; width: 324px; height: 364px; overflow-y: hidden;}
+.twitter-feed UL LI{list-style-type: none; width: 324px; border-top: 1px solid #b7b7b7; font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #585956;}
+.twitter-feed UL LI:first-child{border-top: none;}
+.twitter-feed UL LI P{padding: 8px;}
+.twitter-feed LI A, .twitter-feed LI B{color: #a51e1e; text-decoration: none;}
+.twitter-feed LI SPAN{font-size: 10px; color: #808285; line-height: 18px;}
+.twitter-feed-area A.footer{display:block; width: 225px; height: 36px; background: url('twitter-bubble.png') no-repeat; float: right; margin: 8px 18px 18px 18px; color: #a51e1e; font-size: 18px; font-family: Helvetica, sans-serif; font-weight: bold; text-indent: 10px; padding: 2px;}
 </style>
 
 <script type="text/javascript">
@@ -116,7 +123,7 @@ $(document).ready(function(){
 			// append human-friendly relative time to tweet
 		    var created = moment(tweet_stack[i].created_at).fromNow();
 			text = text + "<br /><span>" + created + "</span>";
-			$("<li><b>" + item.from_user_name + "</b> " + text + "</li>").appendTo(".twitter-feed UL");
+			$("<li><p><b>" + item.from_user_name + "</b> " + text + "</p></li>").appendTo(".twitter-feed UL");
 			tweet_cursor++;
 		}
 	}
