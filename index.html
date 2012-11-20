@@ -73,7 +73,7 @@ $(document).ready(function(){
 		// periodically fetches new tweets and updates tweet_stack to reflect the 30 most recent
 
 		// retrieve all tweets newer than the previous newest tweet ID (blank on initial run)
-		$.getJSON("http://search.twitter.com/search.json?q=" + hashtag + "&rpp=50&since_id=" + twitter_offset + "&include_entities=1", function(data){
+		$.getJSON("http://search.twitter.com/search.json?q=" + hashtag + "&rpp=50&since_id=" + twitter_offset + "&include_entities=1&callback=?", function(data){
 
 			var initialized = (tweet_stack.length != 0);
 
