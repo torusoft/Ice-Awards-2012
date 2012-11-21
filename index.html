@@ -11,29 +11,21 @@
 <script type="text/javascript" src="jquery.slideshowify.min.js"></script> 
 
 <style>
-html, body { height: 720px; margin: 0; padding: 0; background: #000; width: 1280px; position: relative; top: 0px; left: 0px;}
+html, body {width: 1280px; height: 720px; margin: 0; padding: 0; background: #000;  position: relative; top: 0px; left: 0px; font-size: 62.5%;}
 P{margin: 0; padding: 0;}
-.instagram-container {
-	position: absolute;
-	top: 0px;
-	left: 354px; 
-	width: 688px; 
-	height: 387px;
-	border: 1px solid red;
-	z-index: 10;
-	margin: 15px;
-}
 
-.twitter-feed-area{position: absolute; top: 0px; left: 0px; width: 354px; height: 448px; overflow: hidden; background: #000; background: url('twitter-area-background.png') no-repeat bottom;}
-.twitter-feed{width: 324px; height: 376px; background: url('twitter-feed-background.png') no-repeat; margin: 15px 15px 0px 15px;}
+.twitter-feed-area{position: absolute; top: 0px; left: 0px; width: 545px; height: 680px; overflow: hidden; background: url('twitter-area-background.png') no-repeat top;}
+.twitter-feed{width: 483px; height: 558px; background: url('twitter-feed-background.png') no-repeat; margin: 29px 32px 8px 30px;}
 
-.twitter-feed UL{padding-left: 0px; width: 324px; height: 364px; overflow-y: hidden;}
-.twitter-feed UL LI{list-style-type: none; width: 324px; border-top: 1px solid #b7b7b7; font-family: Helvetica, Arial, sans-serif; font-size: 12px; color: #585956;}
+.twitter-feed UL{padding-left: 0px; width: 483px; height: 542px; overflow-y: hidden;}
+.twitter-feed UL LI{list-style-type: none; height: 108px; border-top: 1px solid #b7b7b7; box-shadow: 1px 0px 2px #000;  font-family: Helvetica, Arial, sans-serif;  color: #585956; font-size: 2.5em; line-height: 1.2em;}
 .twitter-feed UL LI:first-child{border-top: none;}
-.twitter-feed UL LI P{padding: 7px 8px;}
+.twitter-feed UL LI  P{padding: 10px 25px;}
 .twitter-feed LI A, .twitter-feed LI B{color: #a51e1e; text-decoration: none;}
-.twitter-feed LI SPAN{font-size: 10px; color: #808285; line-height: 18px;}
-.twitter-feed-area A.footer{display: block; width: 225px; height: 36px; background: url('twitter-bubble.png') no-repeat; float: right; margin: 0px 15px 15px 15px; color: #a51e1e; font-size: 18px; font-family: Helvetica, sans-serif; font-weight: bold; text-indent: 10px; padding: 2px;}
+.twitter-feed LI SPAN{font-size: 0.9em; color: #808285; line-height: 1.5em;}
+.twitter-feed-area A.footer{display: block; width: 344px; height: 64px; background: url('twitter-bubble.png') no-repeat; float: right; margin-right: 12px; color: #a51e1e; font-size: 3.6em; font-family: Helvetica, sans-serif; font-weight: bold; text-indent: 10px; padding: 8px 20px;}
+
+.instagram-container {position: absolute; top: 0px; left: 545px; width: 688px; height: 387px; z-index: 10; margin: 15px;}
 </style>
 
 <script type="text/javascript">
