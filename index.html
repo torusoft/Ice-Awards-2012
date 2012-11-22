@@ -57,7 +57,7 @@ $(document).ready(function(){
 
 					// add new photos to #photo_panel
 					$.each(photos, function(i, photo){
-						$("#photo_pool").append($('<img id="' + photo.id + '" src="' + photo.images.standard_resolution.url + '">'));
+						$("#photo_pool").prepend($('<img id="' + photo.id + '" src="' + photo.images.standard_resolution.url + '">'));
 					});
 
 					// clear current slideshow container (destroys current slideshow),
