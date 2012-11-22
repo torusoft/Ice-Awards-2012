@@ -79,6 +79,12 @@ $(document).ready(function(){
 
 			var initialized = (tweet_stack.length != 0);
 
+			// ensure that since_id did not just return the oldest tweet in an array of 1
+			if(initialized)
+				if(data.results[0].id == tweet_stack[0].id){
+					return;
+				}
+
 			// add all new tweets to tweet_stack, then trim down to 30 newest
 			tweet_stack = data.results.concat(tweet_stack);
 			tweet_stack.slice(0,29);
