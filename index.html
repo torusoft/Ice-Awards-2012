@@ -14,16 +14,16 @@
 html, body {width: 1280px; height: 720px; margin: 0; padding: 0; background: #000;  position: relative; top: 0px; left: 0px; font-size: 62.5%;}
 P{margin: 0; padding: 0;}
 
-.twitter-feed-area{position: absolute; top: 0px; left: 0px; width: 545px; height: 680px; overflow: hidden; }
+.twitter-feed-area{position: absolute; top: 0px; left: 0px; width: 545px; height: 680px; overflow: hidden;}
 .twitter-feed{width: 483px; height: 558px; background: url('twitter-feed-background.png') no-repeat; margin: 29px 32px 8px 30px;}
 
 .twitter-feed UL{padding-left: 0px; width: 483px; height: 542px; overflow-y: hidden;}
-.twitter-feed UL LI{list-style-type: none; height: 108px; border-top: 1px solid #b7b7b7; box-shadow: 1px 0px 2px #000;  font-family: Helvetica, Arial, sans-serif;  color: #585956; font-size: 2.5em; line-height: 1.2em;}
+.twitter-feed UL LI{list-style-type: none; height: 108px; border-top: 1px solid #b7b7b7; box-shadow: 1px 0px 2px #000;  font-family: Helvetica, Arial, sans-serif;  color: #585956; font-size: 2.6em; line-height: 1.2em;}
 .twitter-feed UL LI:first-child{border-top: none;}
 .twitter-feed UL LI  P{padding: 10px 25px;}
 .twitter-feed LI A, .twitter-feed LI B{color: #a51e1e; text-decoration: none;}
 .twitter-feed LI SPAN{font-size: 0.9em; color: #808285; line-height: 1.5em;}
-.twitter-feed-area A.footer{display: block; width: 344px; height: 64px; background: url('twitter-bubble.png') no-repeat; float: right; margin-right: 12px; color: #a51e1e; font-size: 3.6em; font-family: Helvetica, sans-serif; font-weight: bold; text-indent: 10px; padding: 8px 20px;}
+.twitter-feed-area A.footer{display: block; width: 482px; height: 75px; background: url('twitter-footer.png') no-repeat;  color: #a51e1e;  font-family: Helvetica, sans-serif; font-weight: bold; margin-left: 29px;}
 
 .instagram-container {position: absolute; top: 0px; left: 545px; width: 688px; height: 387px; z-index: 10; margin: 15px;}
 </style>
@@ -78,12 +78,6 @@ $(document).ready(function(){
 		$.getJSON("http://search.twitter.com/search.json?q=" + hashtag + "&rpp=50&since_id=" + twitter_offset + "&include_entities=1&callback=?", function(data){
 
 			var initialized = (tweet_stack.length != 0);
-
-			// ensure that since_id did not just return the oldest tweet in an array of 1
-			if(initialized)
-				if(data.results[0].id == tweet_stack[0].id){
-					return;
-				}
 
 			// add all new tweets to tweet_stack, then trim down to 30 newest
 			tweet_stack = data.results.concat(tweet_stack);
@@ -153,7 +147,7 @@ $(document).ready(function(){
 
 <div class="twitter-feed-area">
 	<div class="twitter-feed"><ul></ul></div>
-	<a class="footer">#IceAwards2012</a>
+	<a class="footer"></a>
 </div>
 </body>
 </html>
