@@ -101,7 +101,7 @@ $(document).ready(function(){
 		$('.twitter-feed UL').empty();
 
 		// reset cursor to top of array if we reach the end
-		if(tweet_cursor >= 29) tweet_cursor = 0;
+		if((tweet_cursor >= 29) || (tweet_cursor >= tweet_stack.length)) tweet_cursor = 0;
 
 		// cycle through tweet_stack, 5 tweets at a time, incrementing the cursor each time
 		for(var i=tweet_cursor, ceiling=tweet_cursor+5; ((i<ceiling) && (tweet_cursor < tweet_stack.length)); i++){
